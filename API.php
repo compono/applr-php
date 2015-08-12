@@ -213,4 +213,11 @@ class API {
 	public function isGeoLocationEnabled() {
 		return $this->isServiceEnabled('Geo Location');
 	}
+
+	public function getThemesList() {
+		return $this->_makeCall('themes', array(
+			'api_key' => $this->_apiKey,
+		), false);
+	}
+
 }
