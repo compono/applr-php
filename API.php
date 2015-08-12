@@ -20,7 +20,7 @@ class API {
 
 	const API_ENDPOINT = 'http://applr.io/api/';
 
-    const API_ENDPOINT_BETA = 'http://beta.applr.io/api/v1/';
+    const API_ENDPOINT_BETA = 'https://beta.applr.io/api/v1/';
 
 	/**
 	 * API key
