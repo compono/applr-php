@@ -223,9 +223,7 @@ class API {
 	public function getPreview( $page_data ) {
 		$page_obj = new Tags\Job($page_data);
 
-		return $this->_makeCall('jobs/preview', array(
-			'api_key' => $this->_apiKey
-		), $page_obj->toXML());
+		return $this->_makeCall('jobs/preview', false, $page_obj->toXML());
 	}
 
 }
