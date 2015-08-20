@@ -12,7 +12,7 @@ class API {
 	 * @var bool
 	 */
 
-	private $_debug = false;
+	private $_debug = true;
 
 	/**
 	 * API endpoint base url
@@ -218,6 +218,14 @@ class API {
 		return $this->_makeCall('themes', array(
 			'api_key' => $this->_apiKey,
 		), false);
+	}
+
+	public function getPreview( $page_data ) {
+		$page_obj = new Tags\Job($page_data);
+
+		return $this->_makeCall('jobs/preview', array(
+			'api_key' => $this->_apiKey
+		), $page_obj->toXML());
 	}
 
 }
