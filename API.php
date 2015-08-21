@@ -107,7 +107,8 @@ class API {
 		curl_setopt($this->_ch, CURLOPT_CONNECTTIMEOUT, 20);
 		curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->_ch, CURLOPT_USERAGENT, 'applr-php');
-
+print_r($data);
+		die;
 		if ($data) {
 			curl_setopt($this->_ch, CURLOPT_POST, true);
 			curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
