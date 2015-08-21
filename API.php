@@ -12,7 +12,7 @@ class API {
 	 * @var bool
 	 */
 
-	private $_debug = true;
+	private $_debug = false;
 
 	/**
 	 * API endpoint base url
