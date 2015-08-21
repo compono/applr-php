@@ -65,6 +65,7 @@ class Job extends BasicTag
 					case 'title':
 					case 'description':
 					case 'geo_location':
+					case 'theme_id':
 						$setter = $this->getSetterName($property);
 						if (method_exists($this, $setter)) {
 							call_user_func(array(&$this, $setter), $prop_value);
