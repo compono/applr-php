@@ -33,6 +33,7 @@ class Job extends BasicTag
 			'redirect_url',
 			'title',
 			'description',
+			'theme_id',
 			'label' => array(
 				'elements' => 'labels',
 				'type' => 'foreach'
