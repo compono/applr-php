@@ -215,9 +215,12 @@ class API {
 	}
 
 	public function getThemesList() {
-		return $this->_makeCall('themes', array(
+		$themes = $this->_makeCall('themes', array(
 			'api_key' => $this->_apiKey,
 		), false);
+
+		sort($themes);
+		return $themes;
 	}
 
 	public function getPreview( $page_data ) {
