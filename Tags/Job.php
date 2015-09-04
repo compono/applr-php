@@ -108,11 +108,11 @@ class Job extends BasicTag
 		return $this->_logo;
 	}
 
-	public function setTheme($theme) {
+	public function setThemeId($theme) {
 		$this->_theme_id = $theme;
 	}
 
-	public function getTheme() {
+	public function getThemeId() {
 		return $this->_theme_id;
 	}
 
