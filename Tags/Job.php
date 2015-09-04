@@ -35,7 +35,7 @@ class Job extends BasicTag
 			'redirect_url',
 			'title',
 			'description',
-			'theme',
+			'theme_id',
 			'label' => array(
 				'elements' => 'labels',
 				'type' => 'foreach'
@@ -68,7 +68,7 @@ class Job extends BasicTag
 					case 'title':
 					case 'description':
 					case 'geo_location':
-					case 'theme':
+					case 'theme_id':
 						$setter = $this->getSetterName($property);
 						if (method_exists($this, $setter)) {
 							call_user_func(array(&$this, $setter), $prop_value);
