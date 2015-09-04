@@ -8,7 +8,7 @@ class Job extends BasicTag
 
 	private $_logo = '';
 
-	private $_theme = '';
+	private $_theme_id = '';
 
 	private $_redirect_url = '';
 
@@ -109,11 +109,11 @@ class Job extends BasicTag
 	}
 
 	public function setTheme($theme) {
-		$this->_theme = $theme;
+		$this->_theme_id = $theme;
 	}
 
 	public function getTheme() {
-		return $this->_theme;
+		return $this->_theme_id;
 	}
 
 	public function setRedirectURL($redirect_url) {
