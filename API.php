@@ -214,6 +214,12 @@ class API {
 		return $this->isServiceEnabled('Geo Location');
 	}
 
+	public function createTheme($name) {
+		$data = array('theme_name' => $name);
+
+		return $this->_makeCall('themes', false,$data);
+	}
+
 	public function getThemesList() {
 		$themes = $this->_makeCall('themes', array(
 			'api_key' => $this->_apiKey,
