@@ -88,6 +88,7 @@ class API {
 
 	protected function _makeCall($method, $params, $data) {
 		$apiCall = $this->getAPIEndpoint() . $method;
+		$log[] =  $this->_getApiKey();
 
 		if (!$this->_ch) {
 			$this->_ch = curl_init();
@@ -101,6 +102,9 @@ class API {
 		if (is_array($params) and $params) {
 			$apiCall .= '?' . http_build_query($params);
 		}
+		$log[] = $apiCall;
+		$log[] = $data;
+		$this->writeLog($log);
 
 		curl_setopt($this->_ch, CURLOPT_URL, $apiCall);
 		curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headerData);
@@ -233,6 +237,27 @@ class API {
 		$page_obj = new Tags\Job($page_data);
 
 		return $this->_makeCall('jobs/preview', false, $page_obj->toXML());
+	}
+
+	protected function writeLog($log = array()) {
+		if(!is_array($log) || !count($log))
+			return false;
+
+		$date = date('Y-m-d');
+
+		$fPath = SNAP_APPLICATION_PATH . '/tmp/applr';
+		$fName = sprintf('applr_xml_%s.txt', $date);
+
+		if(!is_dir($fPath))
+			mkdir($fPath, 0777, true);
+
+		$writer = new \Zend_Log_Writer_Stream($fPath . '/' . $fName);
+		$fileLog = new \Zend_Log($writer);
+		$fileLog->info('--- start ---');
+		foreach($log as $l)
+			$fileLog->info($l);
+
+		$fileLog->info('--- end ---');
 	}
 
 }
