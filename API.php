@@ -47,6 +47,10 @@ class API {
 
     private $environment = 'production';
 
+	private $headerData = array(
+		'Accept: application'
+	);
+
 	protected $reporting_defaults = array(
 		'limit' => 100
 	);
@@ -68,6 +72,7 @@ class API {
 	}
 
 	public function postJob() {
+		$this->headerData[] = 'Content-Type: text/xml';
 		return $this->postXML($this->job->toXML());
 	}
 
@@ -94,10 +99,7 @@ class API {
 			$this->_ch = curl_init();
 		}
 
-		$headerData = array(
-			'Accept: application',
-			'Authorization: Token token=' . $this->_getApiKey()
-		);
+		$this->headerData[] = 'Authorization: Token token=' . $this->_getApiKey();
 
 		if (is_array($params) and $params) {
 			$apiCall .= '?' . http_build_query($params);
@@ -107,7 +109,7 @@ class API {
 
 
 		curl_setopt($this->_ch, CURLOPT_URL, $apiCall);
-		curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headerData);
+		curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $this->headerData);
 		curl_setopt($this->_ch, CURLOPT_CONNECTTIMEOUT, 20);
 		curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->_ch, CURLOPT_USERAGENT, 'applr-php');
