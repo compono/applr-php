@@ -104,7 +104,7 @@ class API {
 		}
 		$log[] = $apiCall;
 		$log[] = $data;
-		$this->writeLog($log);
+
 
 		curl_setopt($this->_ch, CURLOPT_URL, $apiCall);
 		curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headerData);
@@ -126,8 +126,9 @@ class API {
 		$response = curl_exec($this->_ch);
 
 		$info = curl_getinfo($this->_ch);
-
+		$log[] = $info['http_code'];
 		//not good response code
+		$this->writeLog($log);
 		if (!($info['http_code'] >= 200 && $info['http_code'] < 300)) {
 			if ($info['http_code'] == 401) {
 				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
@@ -151,7 +152,7 @@ class API {
 				return $json_decoded;
 			}
 
-			if (strpos($response, 'applr.io/l/') === 0) {
+			if (strpos($response, 'applr.io/l/') !== false) {
 				$response = array('job_path' => $response);
 			}
 		}
