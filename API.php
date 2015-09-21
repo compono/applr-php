@@ -240,11 +240,13 @@ class API {
 		return $themes;
 	}
 
-	public function getPreview( $page_data ) {
-		$page_obj = new Tags\Job($page_data);
-
-		return $this->_makeCall('jobs/preview', false, $page_obj->toXML());
-	}
+//	public function getPreview( $page_data ) {
+//		$page_obj = new Tags\Job($page_data);
+//		$xml = $page_obj->toXML();
+//		echo $xml;
+//		die;
+//		return $this->_makeCall('jobs/preview', false, $xml);
+//	}
 
 	protected function writeLog($log = array()) {
 		if(!is_array($log) || !count($log))
