@@ -18,7 +18,7 @@ class API {
 	 * API endpoint base url
 	 */
 
-	const API_ENDPOINT = 'http://applr.io/api/';
+	const API_ENDPOINT = 'http://applr.io/api/v1/';
 
 	/**
 	 * API key
@@ -69,13 +69,6 @@ class API {
 
 	protected function _getApiKey() {
 		return $this->_apiKey;
-	}
-
-	public function getReporting($options = array()) {
-		$options['token'] = $this->_getApiKey();
-		$options = array_merge($options, $this->reporting_defaults);
-
-		return $this->_makeCall('api_keys/reports.json', $options, null);
 	}
 
 	protected function _makeCall($method, $params, $data) {
@@ -157,5 +150,12 @@ class API {
 		}
 
 		return $result;
+	}
+
+	public function getReporting($options = array()) {
+		$options['token'] = $this->_getApiKey();
+		$options = array_merge($options, $this->reporting_defaults);
+
+		return $this->_makeCall('api_keys/reports.json', $options, null);
 	}
 }
