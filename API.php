@@ -18,7 +18,7 @@ class API {
 	 * API endpoint base url
 	 */
 
-	const API_ENDPOINT = 'http://applr.io/api/';
+	const API_ENDPOINT = 'https://applr.io/api/v1/';
 
     const API_ENDPOINT_BETA = 'https://beta.applr.io/api/v1/';
 
