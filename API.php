@@ -155,7 +155,9 @@ class API {
 			echo "<pre>\nVerbose information:\n", htmlspecialchars($verboseLog), "</pre>\n";
 		}
 		$log[] = 'response: ' . $response;
-
+		if($this->write_log)
+			$this->writeLog($log);
+		
 		if ($response) {
 			$json_decoded = json_decode($response, true);
 			if ($json_decoded) {
@@ -166,8 +168,6 @@ class API {
 				$response = array('job_path' => $response);
 			}
 		}
-		if($this->write_log)
-			$this->writeLog($log);
 
 		return $response;
 	}
