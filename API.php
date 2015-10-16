@@ -18,7 +18,7 @@ class API {
 	 * API endpoint base url
 	 */
 
-	const API_ENDPOINT = 'https://applr.io/api/v1/';
+	const API_ENDPOINT = 'https://www.applr.io/api/v1/';
 
     const API_ENDPOINT_BETA = 'https://beta.applr.io/api/v1/';
 
@@ -47,6 +47,8 @@ class API {
 
     private $environment = 'production';
 
+	public $write_log = false;
+
 	protected $reporting_defaults = array(
 		'limit' => 100
 	);
@@ -71,6 +73,7 @@ class API {
 
 	public function postJob() {
 		$this->additionalHeaders[] = 'Content-Type: text/xml';
+		$this->write_log = true;
 		return $this->postXML($this->job->toXML());
 	}
 
@@ -91,7 +94,6 @@ class API {
 
 	protected function _makeCall($method, $params, $data) {
 		$apiCall = $this->getAPIEndpoint() . $method;
-		$log[] =  $this->_getApiKey();
 
 		if (!$this->_ch) {
 			$this->_ch = curl_init();
@@ -108,7 +110,8 @@ class API {
 		if (is_array($params) and $params) {
 			$apiCall .= '?' . http_build_query($params);
 		}
-		$log[] = $apiCall;
+
+		$log[] = $apiCall . ' api_key: ' . $this->_getApiKey();
 		$log[] = $data;
 
 
@@ -134,7 +137,7 @@ class API {
 		$info = curl_getinfo($this->_ch);
 		$log[] = $info['http_code'];
 		//not good response code
-		$this->writeLog($log);
+
 		if (!($info['http_code'] >= 200 && $info['http_code'] < 300)) {
 			if ($info['http_code'] == 401) {
 				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
@@ -151,6 +154,7 @@ class API {
 
 			echo "<pre>\nVerbose information:\n", htmlspecialchars($verboseLog), "</pre>\n";
 		}
+		$log[] = 'response: ' . $response;
 
 		if ($response) {
 			$json_decoded = json_decode($response, true);
@@ -162,6 +166,8 @@ class API {
 				$response = array('job_path' => $response);
 			}
 		}
+		if($this->write_log)
+			$this->writeLog($log);
 
 		return $response;
 	}
