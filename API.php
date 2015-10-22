@@ -121,8 +121,9 @@ class API {
 		curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($this->_ch, CURLOPT_USERAGENT, 'applr-php');
 
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+//		bad idea
+//		curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
+//		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
 
 		if ($data) {
 			curl_setopt($this->_ch, CURLOPT_POST, true);
