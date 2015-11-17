@@ -142,7 +142,10 @@ class API {
 		$info = curl_getinfo($this->_ch);
 		$log[] = $info['http_code'];
 		//not good response code
-
+		$log[] = 'response: ' . $response;
+		if($this->write_log)
+			$this->writeLog($log);
+		
 		if (!($info['http_code'] >= 200 && $info['http_code'] < 300)) {
 			if ($info['http_code'] == 401) {
 				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
@@ -159,9 +162,6 @@ class API {
 
 			echo "<pre>\nVerbose information:\n", htmlspecialchars($verboseLog), "</pre>\n";
 		}
-		$log[] = 'response: ' . $response;
-		if($this->write_log)
-			$this->writeLog($log);
 		
 		if ($response) {
 			$json_decoded = json_decode($response, true);
