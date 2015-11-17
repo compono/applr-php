@@ -86,6 +86,7 @@ class API {
 	}
 
 	public function getReporting($options = array()) {
+		$this->write_log = true;
 		$options['token'] = $this->_getApiKey();
 		$options = array_merge($options, $this->reporting_defaults);
 
