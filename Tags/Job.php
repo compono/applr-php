@@ -157,9 +157,9 @@ class Job extends BasicTag
 	}
 
 	public function addQuestion(array $question) {
-		if($question['style'] == 'video')
-			$this->_questions[] = new Video($question);
-		else
+//		if($question['style'] == 'video')
+//			$this->_questions[] = new Video($question);
+//		else
 			$this->_questions[] = new Question($question);
 	}
 
