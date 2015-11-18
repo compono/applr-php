@@ -5,12 +5,14 @@ namespace Applr\Tags;
 class Video extends BasicTag
 {
     private $_ask = '';
+    private $_name = '';
 
+    private $_style;
     private $_maxtime = 0;
 
     protected $_xml = array(
-        'tag' => 'video',
-        'attributes' => array('maxtime'),
+        'tag' => 'question',
+        'attributes' => array('limit', 'style'),
         'element' => 'ask'
     );
 
@@ -18,8 +20,8 @@ class Video extends BasicTag
         if (isset($video['ask'])) {
             $this->setAsk($video['ask']);
         }
-        if (isset($video['maxtime'])) {
-            $this->setMaxtime($video['maxtime']);
+        if (isset($video['limit'])) {
+            $this->setMaxtime($video['limit']);
         }
     }
 
@@ -37,5 +39,21 @@ class Video extends BasicTag
 
     public function getMaxtime() {
         return $this->_maxtime;
+    }
+
+    public function setStyle($style) {
+        $this->_style = $style;
+    }
+
+    public function getStyle() {
+        return $this->_style;
+    }
+
+    public function setName($name) {
+        $this->_name = $name;
+    }
+
+    public function getName() {
+        return $this->_name;
     }
 }
