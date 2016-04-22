@@ -8,7 +8,7 @@ class Ask extends BasicTag
 
 	private $_limit;
 
-	private $_required;
+	private $_required = true;
 
 	protected $_xml = array(
 		'tag' => 'ask',
