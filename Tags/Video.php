@@ -10,9 +10,11 @@ class Video extends BasicTag
     private $_style;
     private $_maxtime = 0;
 
+    private $_required = false;
+
     protected $_xml = array(
         'tag' => 'question',
-        'attributes' => array('limit', 'style'),
+        'attributes' => array('limit', 'style', 'required'),
         'element' => 'ask'
     );
 
@@ -22,6 +24,10 @@ class Video extends BasicTag
         }
         if (isset($video['limit'])) {
             $this->setMaxtime($video['limit']);
+        }
+
+        if (isset($video['required'])) {
+            $this->setRequired($video['required']);
         }
     }
 
@@ -55,5 +61,13 @@ class Video extends BasicTag
 
     public function getName() {
         return $this->_name;
+    }
+
+    public function setRequired($required) {
+        $this->_required = $required;
+    }
+
+    public function getRequired() {
+        return $this->_required;
     }
 }

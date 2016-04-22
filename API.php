@@ -74,6 +74,7 @@ class API {
 	public function postJob() {
 		$this->additionalHeaders[] = 'Content-Type: text/xml';
 		$this->write_log = true;
+
 		return $this->postXML($this->job->toXML());
 	}
 
@@ -143,6 +144,7 @@ class API {
 		$log[] = $info['http_code'];
 		//not good response code
 		$log[] = 'response: ' . $response;
+
 		if($this->write_log)
 			$this->writeLog($log);
 		
