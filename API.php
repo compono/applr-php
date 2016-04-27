@@ -149,12 +149,19 @@ class API {
 			$this->writeLog($log);
 		
 		if (!($info['http_code'] >= 200 && $info['http_code'] < 300)) {
+			$exception_string = json_encode(array (
+				'http_code' => $info['http_code'],
+				'response' => $response
+			));
 			if ($info['http_code'] == 401) {
-				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
+//				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
+				throw new Exception\InvalidApiKeyException($exception_string);
 			} elseif ($info['http_code'] == 400) {
-				throw new Exception\BadRequest($info['http_code'] . ': ' . $response);
+//				throw new Exception\BadRequest($info['http_code'] . ': ' . $response);
+				throw new Exception\BadRequest($exception_string);
 			} else {
-				throw new Exception\ApiCallException($info['http_code'] . ': ' . $response);
+//				throw new Exception\ApiCallException($info['http_code'] . ': ' . $response);
+				throw new Exception\ApiCallException($exception_string);
 			}
 		}
 
