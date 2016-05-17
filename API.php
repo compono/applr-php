@@ -78,6 +78,13 @@ class API {
 		return $this->postXML($this->job->toXML());
 	}
 
+	public function updateJob($jobID){
+		$this->additionalHeaders[] = 'Content-Type: text/xml';
+		$this->write_log = true;
+
+		return $this->_makeCall('jobs', array('job_id' => $jobID), $this->job->toXML(), 'PUT');
+	}
+
 	public function postXML($xml) {
 		return $this->_makeCall('jobs', null, $xml);
 	}
@@ -94,12 +101,11 @@ class API {
 		return $this->_makeCall('api_keys/reports.json', $options, null);
 	}
 
-	protected function _makeCall($method, $params, $data) {
+	protected function _makeCall($method, $params, $data, $request_method = '') {
 		$apiCall = $this->getAPIEndpoint() . $method;
 
-		if (!$this->_ch) {
-			$this->_ch = curl_init();
-		}
+		$http_client = new \Zend_Http_Client();
+		$config = \Zend_Registry::get( 'config' );
 
 		$headerData = array(
 			'Accept: application',
@@ -109,69 +115,65 @@ class API {
 
 		$headers = array_merge($headerData, $this->additionalHeaders);
 
-		if (is_array($params) and $params) {
+		if (is_array($params) && $request_method != 'PUT')
 			$apiCall .= '?' . http_build_query($params);
-		}
+
+		elseif($request_method == 'PUT')
+			$apiCall .= '/'. $params['job_id'];
+
 
 		$log[] = $apiCall . ' api_key: ' . $this->_getApiKey();
 		$log[] = $data;
 
-
-		curl_setopt($this->_ch, CURLOPT_URL, $apiCall);
-		curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($this->_ch, CURLOPT_CONNECTTIMEOUT, 20);
-		curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($this->_ch, CURLOPT_USERAGENT, 'applr-php');
-
-//		bad idea
-//		curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, 0);
-//		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
+		$http_client->setConfig($config->zend->http_client->options->toArray());
+		$http_client->setUri($apiCall);
+		$http_client->setHeaders($headers);
+		$http_client->setConfig(array('useragent' => 'applr-php', 'timeout' => 20));
 
 		if ($data) {
-			curl_setopt($this->_ch, CURLOPT_POST, true);
-			curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $data);
+			$http_client-> setRawData($data, 'text/xml');
+			if($request_method == 'PUT')
+				$http_client->setMethod('PUT');
+			else
+				$http_client->setMethod('POST');
 		}
 
-		if ($this->_debug) {
-			$verbose = fopen('php://temp', 'rw+');
-			curl_setopt($this->_ch, CURLOPT_STDERR, $verbose);
-			curl_setopt($this->_ch, CURLOPT_VERBOSE, true);
-		}
+		$request = $http_client->request();
+		$response = $request->getBody();
 
-		$response = curl_exec($this->_ch);
-
-		$info = curl_getinfo($this->_ch);
-		$log[] = $info['http_code'];
+		$request_status = $request->getStatus();
+		$log[] = $request_status;
 		//not good response code
 		$log[] = 'response: ' . $response;
 
 		if($this->write_log)
 			$this->writeLog($log);
-		
-		if (!($info['http_code'] >= 200 && $info['http_code'] < 300)) {
+
+		if (!($request_status >= 200 && $request_status < 300)) {
 			$exception_string = json_encode(array (
-				'http_code' => $info['http_code'],
+				'http_code' => $request_status,
 				'response' => $response
 			));
-			if ($info['http_code'] == 401) {
-//				throw new Exception\InvalidApiKeyException($info['http_code'] . ': ' . $response);
+
+			if ($request_status == 401)
 				throw new Exception\InvalidApiKeyException($exception_string);
-			} elseif ($info['http_code'] == 400) {
-//				throw new Exception\BadRequest($info['http_code'] . ': ' . $response);
+			elseif ($request_status == 400)
 				throw new Exception\BadRequest($exception_string);
-			} else {
-//				throw new Exception\ApiCallException($info['http_code'] . ': ' . $response);
+			else
 				throw new Exception\ApiCallException($exception_string);
-			}
 		}
 
 		if ($this->_debug) {
-			rewind($verbose);
-			$verboseLog = stream_get_contents($verbose);
+			Zend_Registry::get( 'logger' )->captureMessage( "Verbose information: ", null, array(
+				array('extra' => array(
+					'hhtp_code' => $request_status,
+					'response' => $response,
+				)),
+			));
 
-			echo "<pre>\nVerbose information:\n", htmlspecialchars($verboseLog), "</pre>\n";
+			$logs[] = "Verbose information: " . $response;
 		}
-		
+
 		if ($response) {
 			$json_decoded = json_decode($response, true);
 			if ($json_decoded) {
