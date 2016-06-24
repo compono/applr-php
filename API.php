@@ -94,7 +94,6 @@ class API {
 	}
 
 	public function getReporting($options = array()) {
-		$this->write_log = true;
 		$options['token'] = $this->_getApiKey();
 		$options = array_merge($options, $this->reporting_defaults);
 
@@ -166,7 +165,7 @@ class API {
 		if ($this->_debug) {
 			Zend_Registry::get( 'logger' )->captureMessage( "Verbose information: ", null, array(
 				array('extra' => array(
-					'hhtp_code' => $request_status,
+					'http_code' => $request_status,
 					'response' => $response,
 				)),
 			));
