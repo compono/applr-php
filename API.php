@@ -130,11 +130,19 @@ class API {
 		$http_client->setConfig(array('useragent' => 'applr-php', 'timeout' => 20));
 
 		if ($data) {
-			$http_client-> setRawData($data, 'text/xml');
-			if($request_method == 'PUT')
+//			$http_client->setRawData($data, 'text/xml');
+			if($request_method == 'PUT') {
 				$http_client->setMethod('PUT');
-			else
+				$http_client->setRawData($data, 'text/xml');
+			}
+			else {
 				$http_client->setMethod('POST');
+				if(is_array($data))
+					$http_client->setParameterPost($data);
+				else
+					$http_client->setRawData($data, 'text/xml');
+			}
+
 		}
 
 		$request = $http_client->request();
@@ -249,7 +257,7 @@ class API {
 	public function createTheme($name) {
 		$data = array('theme_name' => $name);
 
-		return $this->_makeCall('themes', false,$data);
+		return $this->_makeCall('themes', false, $data, 'POST');
 	}
 
 	public function getThemesList() {
