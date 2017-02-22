@@ -279,10 +279,9 @@ class API {
 
 	protected function writeLog($log = array()) {
 		if(!is_array($log) || !count($log))
-			return false;
-
-		return false;
-		$date = date('Y-m-d');
+            return false;
+        
+        $date = date('Y-m-d');
 
 		$fPath = \Zend_Registry::get('config')->idibu->paths->logs . '/applr';
 		$fName = sprintf('applr_xml_%s.txt', $date);
