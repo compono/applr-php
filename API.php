@@ -283,7 +283,7 @@ class API {
 
 		$date = date('Y-m-d');
 
-		$fPath = SNAP_APPLICATION_PATH . '/tmp/applr';
+		$fPath = \Zend_Registry::get('config')->idibu->paths->logs . '/applr';
 		$fName = sprintf('applr_xml_%s.txt', $date);
 
 		if(!is_dir($fPath))
