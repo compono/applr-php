@@ -171,7 +171,7 @@ class API {
 		}
 
 		if ($this->_debug) {
-			Zend_Registry::get( 'logger' )->captureMessage( "Verbose information: ", null, array(
+			\Zend_Registry::get( 'logger' )->captureMessage( "Verbose information: ", null, array(
 				array('extra' => array(
 					'http_code' => $request_status,
 					'response' => $response,
