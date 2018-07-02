@@ -22,6 +22,12 @@ class API {
 
     const API_ENDPOINT_BETA = 'https://beta.applr.io/api/v1/';
 
+    /**  */
+    const API_ENV_PROD = 'production';
+
+	/**  */
+    const API_ENV_BETA = 'beta';
+
 	/**
 	 * API key
 	 */
@@ -45,7 +51,7 @@ class API {
 	 * @var array
 	 */
 
-    private $environment = 'production';
+    private $environment = '';
 
 	public $write_log = false;
 
@@ -55,16 +61,14 @@ class API {
 
 	private $additionalHeaders = array();
 
-	function __construct($apiKey, $environment = 'production') {
+	function __construct($apiKey, $environment = false) {
 		if (!$apiKey) {
 			throw new Exception\EmptyApiKeyException('Please provide API key');
 		}
 
 		$this->_apiKey = $apiKey;
 
-		if ($environment == 'beta') {
-			$this->environment = 'beta';
-		}
+		$this->setEnvironment($environment);
 	}
 
 	public function createJob($job = array()) {
@@ -208,19 +212,51 @@ class API {
 	}
 
     protected function getAPIEndpoint() {
-        if ($this->environment == 'production') {
+        if ($this->isProductionEnv()) {
             return self::API_ENDPOINT;
         } else {
             return self::API_ENDPOINT_BETA;
         }
     }
 
+	/**
+	 * @return bool
+	 */
+    private function isProductionEnv() {
+	    return ($this->environment == self::API_ENV_PROD);
+    }
+
     public function setEnvimonmentBeta() {
-        $this->environment = 'beta';
+	    return $this->setEnvironment(self::API_ENV_BETA);
     }
 
     public function setEnvironmentProduction() {
-        $this->environment = 'production';
+	    return $this->setEnvironment(self::API_ENV_PROD);
+    }
+
+	/**
+	 * @param $env
+	 *
+	 * @return $this
+	 * @throws Exception\InvalidEnvironmentException
+	 */
+    private function setEnvironment($env) {
+		if(!$env) {
+			$env = \Zend_Registry::get('config')->applr->environment;
+		}
+
+		switch ($env) {
+			case self::API_ENV_PROD:
+			case self::API_ENV_BETA:
+				break;
+			default:
+				throw new Exception\InvalidEnvironmentException('Invalid environment passed to the api lib');
+				break;
+		}
+
+	    $this->environment = $env;
+
+		return $this;
     }
 
 	public function getServicesList() {
