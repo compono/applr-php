@@ -14,13 +14,13 @@ class API {
 
 	private $_debug = false;
 
+    const API_ENDPOINT_PATH = 'api/v1';
+
 	/**
-	 * API endpoint base url
+	 * API base host
 	 */
-
-	const API_ENDPOINT = 'https://applr.io/api/v1/';
-
-    const API_ENDPOINT_BETA = 'https://beta.applr.io/api/v1/';
+    const API_HOST_PROD = 'https://applr.io';
+    const API_HOST_BETA = 'https://beta.applr.io';
 
     /**  */
     const API_ENV_PROD = 'production';
@@ -33,12 +33,6 @@ class API {
 	 */
 
 	private $_apiKey;
-
-	/**
-	 * cURL handler object
-	 */
-
-	private $_ch;
 
 	/**
 	 * Job tag
@@ -105,7 +99,7 @@ class API {
 	}
 
 	protected function _makeCall($method, $params, $data, $request_method = '') {
-		$apiCall = $this->getAPIEndpoint() . $method;
+		$apiCall = $this->getAPIRequestUrl($method);
 
 		$http_client = new \Zend_Http_Client();
 		$config = \Zend_Registry::get( 'config' );
@@ -202,7 +196,7 @@ class API {
 	public function isApiKeyValid() {
 		$result = false;
 
-		$response = file_get_contents($this->getAPIEndpoint() . '/api_keys/status?token=' . $this->_apiKey);
+		$response = file_get_contents($this->getAPIRequestUrl('api_keys/status') . '?token=' . $this->_apiKey);
 
 		if ($response == 'Key is Valid') {
 			$result = true;
@@ -211,12 +205,32 @@ class API {
 		return $result;
 	}
 
-    protected function getAPIEndpoint() {
-        if ($this->isProductionEnv()) {
-            return self::API_ENDPOINT;
-        } else {
-            return self::API_ENDPOINT_BETA;
-        }
+    private function getAPIEndpoint() {
+		return implode('/', [$this->getAPIHost(), self::API_ENDPOINT_PATH]);
+    }
+
+	/**
+	 * @param $params
+	 *
+	 * @return string
+	 */
+    private function getAPIRequestUrl($params) {
+		if(is_string($params)) {
+			$params = [$params];
+		}
+
+		return implode('/', array_merge([$this->getAPIEndpoint()], $params));
+    }
+
+	/**
+	 * @return string
+	 */
+    public function getAPIHost() {
+	    if ($this->isProductionEnv()) {
+		    return self::API_HOST_PROD;
+	    }
+
+	    return self::API_HOST_BETA;
     }
 
 	/**
