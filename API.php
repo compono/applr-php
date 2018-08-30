@@ -21,12 +21,16 @@ class API {
 	 */
     const API_HOST_PROD = 'https://applr.io';
     const API_HOST_BETA = 'https://beta.applr.io';
+    const API_HOST_LOCAL = 'http://localhost:3000';
 
     /**  */
     const API_ENV_PROD = 'production';
 
 	/**  */
     const API_ENV_BETA = 'beta';
+
+	/**  */
+	const API_ENV_LOCAL = 'local';
 
 	/**
 	 * API key
@@ -102,7 +106,6 @@ class API {
 		$apiCall = $this->getAPIRequestUrl($method);
 
 		$http_client = new \Zend_Http_Client();
-		$config = \Zend_Registry::get( 'config' );
 
 		$headerData = array(
 			'Accept: application',
@@ -122,7 +125,7 @@ class API {
 		$log[] = $apiCall . ' api_key: ' . $this->_getApiKey();
 		$log[] = $data;
 
-		$http_client->setConfig($config->zend->http_client->options->toArray());
+		$http_client->setConfig(\Zend_Registry::get( 'config' )->zend->http_client->options->toArray());
 		$http_client->setUri($apiCall);
 		$http_client->setHeaders($headers);
 		$http_client->setConfig(array('useragent' => 'applr-php', 'timeout' => 20));
@@ -196,7 +199,9 @@ class API {
 	public function isApiKeyValid() {
 		$result = false;
 
-		$response = file_get_contents($this->getAPIRequestUrl('api_keys/status') . '?token=' . $this->_apiKey);
+		$params['token'] = $this->_getApiKey();
+
+		$response = $this->_makeCall('api_keys/status', $params, null);
 
 		if ($response == 'Key is Valid') {
 			$result = true;
@@ -226,11 +231,35 @@ class API {
 	 * @return string
 	 */
     public function getAPIHost() {
+	    $host = '';
 	    if ($this->isProductionEnv()) {
 		    return self::API_HOST_PROD;
 	    }
 
-	    return self::API_HOST_BETA;
+	    switch ($this->environment) {
+		    case self::API_ENV_BETA:
+		    	$host = self::API_HOST_BETA;
+		    	break;
+		    case self::API_ENV_LOCAL:
+			    $host = self::API_HOST_LOCAL;
+			    break;
+	    }
+
+	    return $host;
+    }
+
+	/**
+	 * @return string
+	 * @throws \Zend_Exception
+	 */
+    protected function getApiHostLocal() {
+    	$host = \Zend_Registry::get('config')->applr->api_host_local;
+
+    	if(empty($host)) {
+    		return self::API_HOST_LOCAL;
+	    }
+
+	    return $host;
     }
 
 	/**
@@ -262,6 +291,7 @@ class API {
 		switch ($env) {
 			case self::API_ENV_PROD:
 			case self::API_ENV_BETA:
+			case self::API_ENV_LOCAL:
 				break;
 			default:
 				throw new Exception\InvalidEnvironmentException('Invalid environment passed to the api lib');
@@ -278,12 +308,12 @@ class API {
 	}
 
 	public function getEnabledServicesList() {
-		return $this->_makeCall('services/enabled', array('api_key' => $this->_apiKey), false);
+		return $this->_makeCall('services/enabled', ['api_key' => $this->_getApiKey()], false);
 	}
 
 	public function isServiceEnabled($service) {
 		$response = $this->_makeCall('services/is_enable', array(
-			'api_key' => $this->_apiKey,
+			'api_key' => $this->_getApiKey(),
 			'name' => $service
 		), false);
 
@@ -312,7 +342,7 @@ class API {
 
 	public function getThemesList() {
 		$themes = $this->_makeCall('themes', array(
-			'api_key' => $this->_apiKey,
+			'api_key' => $this->_getApiKey(),
 		), false);
 
 		sort($themes);
