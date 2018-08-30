@@ -241,7 +241,7 @@ class API {
 		    	$host = self::API_HOST_BETA;
 		    	break;
 		    case self::API_ENV_LOCAL:
-			    $host = self::API_HOST_LOCAL;
+			    $host = $this->getApiHostLocal();
 			    break;
 	    }
 
