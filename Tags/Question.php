@@ -32,6 +32,7 @@ class Question extends BasicTag
 					case 'ask':
 					case 'style':
 					case 'limit':
+					case 'required':
 						$setter = $this->getSetterName($property);
 						if (method_exists($this, $setter)) {
 							call_user_func(array(&$this, $setter), $prop_value);
@@ -84,6 +85,21 @@ class Question extends BasicTag
 	public function getLimit() {
 		if ($this->_ask) {
 			return $this->_ask->getLimit();
+		}
+
+		return false;
+	}
+
+	public function setRequired($required) {
+		if (!$this->_ask) {
+			$this->_ask = new Ask();
+		}
+		$this->_ask->setRequired($required);
+	}
+
+	public function getRequired() {
+		if ($this->_ask) {
+			return $this->_ask->getRequired();
 		}
 
 		return false;

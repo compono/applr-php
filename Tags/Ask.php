@@ -8,10 +8,12 @@ class Ask extends BasicTag
 
 	private $_limit;
 
+	private $_required = true;
+
 	protected $_xml = array(
 		'tag' => 'ask',
 		'element' => 'ask',
-		'attributes' => array('limit')
+		'attributes' => array('limit', 'required')
 	);
 
 	function __construct($ask = array()) {
@@ -20,6 +22,9 @@ class Ask extends BasicTag
 		}
 		if (isset($ask['limit'])){
 			$this->setLimit($ask['limit']);
+		}
+		if (isset($ask['required'])){
+			$this->setRequired($ask['required']);
 		}
 	}
 
@@ -37,5 +42,13 @@ class Ask extends BasicTag
 
 	public function getLimit() {
 		return $this->_limit;
+	}
+
+	public function setRequired($required) {
+		$this->_required = $required;
+	}
+
+	public function getRequired() {
+		return $this->_required;
 	}
 }
