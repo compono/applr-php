@@ -128,7 +128,7 @@ class API {
 		$http_client->setConfig(\Zend_Registry::get( 'config' )->zend->http_client->options->toArray());
 		$http_client->setUri($apiCall);
 		$http_client->setHeaders($headers);
-		$http_client->setConfig(array('useragent' => 'applr-php', 'timeout' => 20));
+		$http_client->setConfig(array('useragent' => 'applr-php'));
 
 		if ($data) {
 //			$http_client->setRawData($data, 'text/xml');
