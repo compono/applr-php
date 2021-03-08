@@ -24,7 +24,7 @@ class BasicTag
 	protected function _processCurrentTag($tag) {
 		$xml = '';
 
-		if ($tag->_xml['tag']) {
+		if (isset($tag->_xml['tag']) && $tag->_xml['tag']) {
 			$xml .= '<' . $tag->_xml['tag'];
 
 			/*
@@ -45,9 +45,9 @@ class BasicTag
 			 * processing elements inside tag
 			 */
 
-			if ($tag->_xml['elements'] || $tag->_xml['element']) {
+			if ((isset($tag->_xml['elements']) && $tag->_xml['elements']) || (isset($tag->_xml['element']) && $tag->_xml['element'])) {
 				$xml .= '>';
-				if ($tag->_xml['elements']) {
+				if (isset($tag->_xml['elements']) && $tag->_xml['elements']) {
 
 					/*
 					 * complex elements (array of elements)
@@ -73,6 +73,7 @@ class BasicTag
 							//simple element
 						} elseif (is_string($element)) {
 							$getter = $this->getGetterName($element);
+                            $value = false;
 							if (method_exists($tag, $getter)) {
 								$value = $tag->$getter();
 							}
@@ -95,8 +96,9 @@ class BasicTag
 					 * e.g. <tag>element</tag>
 					 */
 
-				} elseif ($tag->_xml['element']) {
+				} elseif (isset($tag->_xml['element']) && $tag->_xml['element']) {
 					$getter = $this->getGetterName($tag->_xml['element']);
+                    $value = false;
 					if (method_exists($tag, $getter)) {
 						$value = $tag->$getter();
 					}
