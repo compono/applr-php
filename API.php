@@ -103,6 +103,8 @@ class API {
 	}
 
 	protected function _makeCall($method, $params, $data, $request_method = '') {
+        $data = $this->sanitizeData($data);
+
 		$apiCall = $this->getAPIRequestUrl($method);
 
 		$http_client = new \Zend_Http_Client();
@@ -348,6 +350,15 @@ class API {
 		sort($themes);
 		return $themes;
 	}
+
+	public function sanitizeData($data) {
+        if ($data) {
+            //remove Controll characters - characters that dont give an output as such but still controls system. Some of the control characters are form feed, backspace, tabspace character etc.
+            $data = preg_replace('/[[:cntrl:]]+/', '', $data);
+        }
+
+        return $data;
+    }
 
 	protected function writeLog($log = array()) {
 		if(!is_array($log) || !count($log))
